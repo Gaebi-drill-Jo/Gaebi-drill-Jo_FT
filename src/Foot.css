@@ -1,0 +1,110 @@
+/* ========== 공통 레이아웃 ========== */
+.foot {
+  position: relative;
+  width: 100%;
+  max-width: 1920px;
+  height: 450px;
+  background: #e1e1e1;
+  border: 6px solid #1e5fb8;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 40px;
+  box-sizing: border-box;
+}
+
+/* 우하단 회사명 */
+.foot:after {
+  content: "(주)깨비드릴조";
+  position: absolute;
+  right: 40px;
+  bottom: 20px;
+  font-family: "Noto Sans KR";
+  font-size: 22px;
+  font-weight: 600;
+  color: #000;
+}
+
+/* 상단 로고/고객센터 */
+#logo2 {
+  width: 200px;           /* 로고 키움 */
+  height: auto;
+  margin-left: 80px;      /* 로고를 오른쪽으로 밀기 */
+  display: inline-block;
+  vertical-align: middle;
+}
+#center {
+  position: absolute;
+  right: 60px;
+  top: 44px;
+  color: #000;
+  font-family: "Noto Sans KR";
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* 상단 구분선 */
+#line1 {
+  width: calc(100% - 80px);
+  height: 1px;
+  background-color: #000;
+  border: none;
+  margin: 14px auto 24px;
+}
+
+/* ========== Instagram 줄 (아이콘 + @y_ehddjs + @jeaju_ne) ========== */
+/* 랩퍼 없이도 한 줄 정렬되도록 각 요소를 인라인블록 + 베이스라인 맞춤 */
+#icon1,
+#y_ehddjs,
+#jeaju_ne {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1.1;
+}
+
+/* 인스타 아이콘 크게 + 좌측 기준선 맞춤 */
+#icon1 {
+  width: 150px;           /* 아이콘 키움 */
+  height: auto;
+  margin-left: 80px;      /* 로고와 같은 좌측 기준선 */
+  margin-top: 6px;
+  object-fit: contain;
+}
+
+/* 두 계정은 굵게/크게, 아이콘과 간격 */
+#y_ehddjs,
+#jeaju_ne {
+  color: #000;
+  font-family: "Yeongdeok Snow Crab";
+  font-size: 36px;
+  font-weight: 800;
+  margin-left: 28px;      /* 아이콘과의 기본 간격 */
+}
+#y_ehddjs { margin-right: 40px; } /* 두 계정 사이 간격 */
+
+/* ========== GitHub 줄 (div.github 안) ========== */
+.github {
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
+  margin-top: 28px;
+  margin-left: 80px;      /* 위 줄과 좌측 기준선 통일 */
+}
+
+/* 깃허브 아이콘 더 크게 */
+#icon2 {
+  width: 120px;           /* 아이콘 키움 */
+  height: 120px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+/* 링크 텍스트 굵고 크게 */
+#gitli {
+  color: #000;
+  font-family: "Yeongdeok Snow Crab";
+  font-size: 40px;
+  font-weight: 900;
+  line-height: 1.1;
+  text-decoration: none;
+}
+#gitli:hover { text-decoration: underline; }
