@@ -1,21 +1,30 @@
 import "./Foot.css";
-import logo from "./images/logo.svg";
-import instaticon from "./images/instaicon.png";
-import giticon from "./images/giticon.png";
+import logo from './images/logo1.png'
+import insta from './images/instagram.png'
+import git from './images/github.png'
 
 function Footer() {
   return (
-    <div className="foot container">
-      <img id="logo2" src={logo} alt="로고" />
-      <span id="center">고객센터 : 010 - 3943 - 9431</span>
-      <hr id="line1" />
-      <img id="icon1" src={instaticon} alt="인스타아이콘" />
-      <span id="y_ehddjs">@y_ehddjs</span>
-      <span id="jeaju_ne">@jeaju_ne</span>
-      <div className="github">
-        <img id="icon2" src={giticon} alt="깃허브아이콘" />
+    <footer className="foot">
+      <div className="fheader">
+        <img className = "logo2" src={logo} alt="로고" />
+        <span className="cus">고객센터 : 010 - 3943 - 9431</span>
+      </div>
+
+      <div className="line" />
+
+      <div className="instline">
+        <img className ="insta" src={insta} alt="instagram" />
+        <div className="instaname">
+          <span>@y_ehddjs</span> 
+          <span>@jeaju_ne</span>
+        </div>
+      </div>
+
+      <div className="instline">
+        <img className = "git " src={git} alt="깃허브" />
         <a
-          id="gitli"
+          className="flink"
           href="https://github.com/orgs/Gaebi-drill-Jo"
           target="_blank"
           rel="noreferrer noopener"
@@ -23,7 +32,9 @@ function Footer() {
           https://github.com/orgs/Gaebi-drill-Jo
         </a>
       </div>
-    </div>
+
+      <span className="fcompany">(주)깨비드릴조</span>
+    </footer>
   );
 }
 
