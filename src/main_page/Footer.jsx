@@ -1,13 +1,14 @@
 import "./Foot.css";
-import logo from './images/logo1.png'
-import insta from './images/instagram.png'
-import git from './images/github.png'
+import logo from '../images/logo1.png'
+import insta from '../images/instagram.png'
+import git from '../images/github.png'
 
 function Footer() {
   return (
+    <>
     <footer className="foot">
       <div className="fheader">
-        <img className = "logo2" src={logo} alt="로고" />
+        <img className = "logo2" src={logo} alt="로고"></img>
         <span className="cus">고객센터 : 010 - 3943 - 9431</span>
       </div>
 
@@ -35,6 +36,7 @@ function Footer() {
 
       <span className="fcompany">(주)깨비드릴조</span>
     </footer>
+    </>
   );
 }
 
