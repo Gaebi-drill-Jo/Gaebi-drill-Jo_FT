@@ -35,7 +35,7 @@
     line-height: 100%;
     letter-spacing: -3.52px;
 }
-.middle_text{
+.middle_stext{
     display: block;
     align-self: stretch;
     color: #FFF;
@@ -44,4 +44,24 @@
     font-style: normal;
     font-weight: 500;
     line-height: 150%;
+}
+.get_start{
+    display: flex;
+width: 159px;
+padding: 16px 32px;
+justify-content: center;
+align-items: center;
+gap: 8px;
+border-radius: 48px;
+background: #FFF;
+}
+.view_demo{
+    display: flex;
+    width: 159px;
+    padding: 16px 32px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border-radius: 48px;
+    border: 1px solid rgba(255, 255, 255, 0.30);
 }
