@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Montserrat:wght@600;700;800&family=Noto+Sans+KR:wght@500;700&display=swap');
-
+@font-face {
+  font-family: 'LABDigital';
+  src: url('/fonts/LABDigital.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 .Hero {
   width: 1920px;
   height: 1660px;
@@ -22,9 +27,11 @@ border-radius: 24px;
 border: 1px solid rgba(255, 255, 255, 0.20);
 background: rgba(255, 255, 255, 0.30);
 margin: 0 auto;
+margin-top : 112px;
 
 }
 .Hero_block{
+
   display: flex;
   align-items: center;
   width: 1122px;
@@ -32,6 +39,9 @@ height: 802px;
 border-radius: 8px;
 background: #f2f2f2;
 margin: 0 auto;
+margin-top: 24px;
+margin-bottom : 24px;
+
 
 
 }
@@ -53,7 +63,8 @@ margin: 0 auto;
   justify-content: space-between;
   width: min(1180px, 94%);
   margin: 48px auto 0;
-  gap: clamp(32px, 6vw, 120px);
+  justify-content: flex-start;
+  gap: 150px
 }
 
 .middle_Title {
@@ -65,7 +76,7 @@ margin: 0 auto;
   font-style: normal;
   font-weight: 900;
   line-height: 100%;
-  letter-spacing: -3.52px;
+  letter-spacing: -3px;
 }
 
 .middle > div {
@@ -176,13 +187,19 @@ aspect-ratio: 1/1;
 .metric-title {
   margin: 2px 0 0;
 color: #000;
-font-family: LABDigital;
+  font-family: 'LABDigital', sans-serif;
 font-size: 70px;
 font-style: normal;
 font-weight: 400;
 line-height: 100%; 
   font-size: 20px;
   letter-spacing: 0.6px;
+  color: #000;
+font-family: LABDigital;
+font-size: 70px;
+font-style: normal;
+font-weight: 400;
+line-height: 100%; 
 
 }
 
@@ -223,3 +240,14 @@ line-height: 100%;
   font-weight: 600;
   font-size: 16px;
 }
+.footer_shadow {
+  width: 100%;
+  max-width: 1987px;      
+  height: 381px;          
+  background: #016EBC;
+  filter: blur(350px);    
+  margin: 80px auto -180px;
+  pointer-events: none;   
+}
+
+

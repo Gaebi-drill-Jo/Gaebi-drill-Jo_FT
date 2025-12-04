@@ -1,12 +1,41 @@
 import './He.css';
-import cloud from '../images/cloud.png'
+import cloud from '../images/Cloud.png'
 import Footer from './Footer';
 import Header from './Header';
 import temperature from '../images/temperature.png';
 import faceMask from '../images/face-mask.png';
 import humidityIcon from '../images/humidityicon.png';
+import { useEffect, useState } from 'react';
+import mqtt from 'mqtt';
+
+
 
 function HeroPage() {
+  const [Temp,setTemp] = useState(25);
+  const [Pm25,setPm25] = useState(25);
+  const [Humi,setHumi] = useState(25);
+  useEffect(()=>{
+  const client = mqtt.connect("ws://broker.hivemq.com:8000/mqtt")
+  client.on("connect", () => {
+  client.subscribe("slide/D~HT")
+  client.subscribe("slide/pm~25")
+});
+client.on("message", (topic, message) => {
+
+  if (topic === "slide/D~HT") {
+    const data = JSON.parse(message.toString());
+    setTemp(data.temp);
+    setHumi(data.humi);
+  }
+
+  if (topic === "slide/pm~25") {
+    setPm25(Number(message.toString()));
+  }
+
+});
+return () => client.end();
+},[]);
+
   return (
     <div className='Hero'>
       <Header />
@@ -29,13 +58,13 @@ function HeroPage() {
           <div className='Hero_div'>
             <div className='metrics-container'>
 
-              {/* 온도 */}
+
               <div className="metric-card">
                 <img src={temperature} alt="온도" className='metric-icon' />
                 <p className='metric-title'>온도</p>
 
                 <div className='metric-main'>
-                  <span className='metric-value'>25</span>
+                  <span className='metric-value'>{Temp}</span>
                   <span className='metric-unit'>°C</span>
                 </div>
 
@@ -43,13 +72,13 @@ function HeroPage() {
                 <span className='metric-diff'>-1°C</span>
               </div>
 
-              {/* 미세먼지 */}
+
               <div className="metric-card metric-divider">
                 <img src={faceMask} alt="미세먼지" className='metric-icon' />
                 <p className='metric-title'>미세먼지</p>
 
                 <div className='metric-main'>
-                  <span className='metric-value'>25</span>
+                  <span className='metric-value'>{Pm25}</span>
                   <span className='metric-unit'>μg/m<sup>3</sup></span>
                 </div>
 
@@ -57,13 +86,13 @@ function HeroPage() {
                 <span className='metric-diff'>+25</span>
               </div>
 
-              {/* 습도 */}
+
               <div className="metric-card metric-divider">
                 <img src={humidityIcon} alt="습도" className='metric-icon' />
                 <p className='metric-title'>습도</p>
 
                 <div className='metric-main'>
-                  <span className='metric-value'>25</span>
+                  <span className='metric-value'>{Humi}</span>
                   <span className='metric-unit'>%</span>
                 </div>
 
@@ -75,7 +104,7 @@ function HeroPage() {
           </div>
         </div>
       </div>
-
+      <div className = "footer_shadow"></div>
       <Footer />
     </div>
   );

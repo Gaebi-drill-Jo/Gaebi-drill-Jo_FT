@@ -1,0 +1,256 @@
+/* ==========================
+   0. 전체 프레임 (1920 x 1080)
+   ========================== */
+
+.graph-root {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(
+    to top,
+    #c7ebff 0%,
+    #64acdd 50%,
+    #006dbc 100%
+  );
+  overflow: hidden;
+}
+
+/* 내부 디자인 기본 사이즈(1040 x 600)를 통째로 스케일링 */
+.graph-inner {
+  position: relative;
+  width: 1040px;
+  height: 600px;
+  overflow: hidden;
+
+  /* 600 * 1.8 = 1080, 1040 * 1.8 = 1872 → 1920x1080 안에 꽉 차는 정도 */
+  transform: scale(1.8);
+  transform-origin: center center;
+}
+
+/* ==========================
+   1. 구름 배경
+   ========================== */
+
+.graph-cloud-bg {
+  position: absolute;
+  left: -115px;
+  top: -255px;
+  width: 2038px;
+  height: 1589px;
+}
+
+.graph-cloud-inner {
+  position: absolute;
+  left: 49px;
+  top: 0;
+  width: 2038px;
+  height: 1427px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.graph-cloud-rotated {
+  flex: none;
+  transform: rotate(180deg) scaleY(-1);
+}
+
+.graph-cloud-image-wrapper {
+  position: relative;
+  width: 2038px;
+  height: 1427px;
+}
+
+.graph-cloud-image-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.graph-cloud-image {
+  position: absolute;
+  top: 0;
+  left: -8.91%;
+  width: 117.02%;
+  height: 101.46%;
+  max-width: none;
+}
+
+/* 아래쪽 안개/그라디언트 */
+.graph-bottom-glow {
+  position: absolute;
+  left: 49px;
+  top: 1226px;
+  width: 1938px;
+  height: 381px;
+  background: linear-gradient(to bottom, #016ebc, #25618c);
+  filter: blur(350px);
+}
+
+/* ==========================
+   2. 그래프 카드 영역
+   ========================== */
+
+/* 그래프 카드 위치 (1040x600 기준 → 이후 scale 1.8) */
+.graph-main {
+  position: absolute;
+  left: 120px;
+  top: 80px;
+  width: 800px;
+  height: 400px;
+}
+
+/* SVG 기본 */
+.graph-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* 카드 배경 (반투명) */
+.graph-card-bg {
+  fill: rgba(0, 0, 0, 0.25);
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 2;
+}
+
+/* 세로 그리드 라인 */
+.graph-grid-line {
+  stroke: rgba(255, 255, 255, 0.18);
+  stroke-width: 1;
+}
+
+/* 공통 영역 그래프 스타일 */
+.graph-area {
+  stroke-width: 2;
+  fill-opacity: 0.35;
+}
+
+/* 미세먼지 영역 (노랑 계열) */
+.graph-area-dust {
+  stroke: #ffb800;
+  fill: #ffb800;
+}
+
+/* 온도 영역 (빨강 계열) */
+.graph-area-temp {
+  stroke: #ff4b4b;
+  fill: #ff4b4b;
+}
+
+/* 습도 영역 (파랑 계열) */
+.graph-area-humidity {
+  stroke: #00a8ff;
+  fill: #00a8ff;
+}
+
+/* ==========================
+   3. Y축 수치 (0 ~ 100)
+   ========================== */
+
+.graph-y-labels {
+  position: absolute;
+  left: 60px;
+  top: 110px;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-weight: 800;
+  font-style: normal;
+  font-size: 20px;
+  line-height: normal;
+  color: #ffffff;
+  text-align: center;
+}
+
+.graph-y-label {
+  position: absolute;
+  left: 0;
+  width: 40px;
+  transform: translateX(-50%);
+}
+
+/* 세로 위치 (1040x600 기준에서 위치 잡고 있음) */
+.graph-y-label-100 { top: 0px; }
+.graph-y-label-80  { top: 55px; }
+.graph-y-label-60  { top: 110px; }
+.graph-y-label-40  { top: 165px; }
+.graph-y-label-20  { top: 220px; }
+.graph-y-label-0   { top: 275px; }
+
+/* ==========================
+   4. X축 시각 라벨
+   ========================== */
+
+.graph-x-labels {
+  position: absolute;
+  left: 160px;
+  top: 500px;
+  width: 720px;
+
+  display: flex;
+  justify-content: space-between;
+
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-weight: 800;
+  font-style: normal;
+  font-size: 18px;
+  line-height: normal;
+  color: #ffffff;
+  text-align: center;
+}
+
+.graph-x-label {
+  /* flex 기준이라 별도 translateX 필요 없음 */
+}
+
+/* ==========================
+   5. 범례 (미세먼지 / 온도 / 습도)
+   ========================== */
+
+.graph-legend {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.graph-legend-item {
+  display: flex;
+  align-items: center;
+}
+
+/* 동그라미 아이콘 */
+.graph-legend-dot {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+}
+
+.graph-legend-dot img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 범례 텍스트 */
+.graph-legend-text {
+  font-family: "Satoshi_Variable", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 16px;
+  line-height: 1.2;
+  color: #ffffff;
+}
