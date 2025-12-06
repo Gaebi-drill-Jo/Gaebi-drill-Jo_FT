@@ -1,8 +1,8 @@
 // Login.jsx
 import React from "react";
-import "./Login.css";
+import "./Join.css";
 import cloude222 from '../images/cloud.png'
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 // 배경 구름 이미지
 const cloudBackgroundUrl =
   "https://www.figma.com/api/mcp/asset/e43512d3-24d6-4941-a6b5-a09f913da012";
@@ -84,10 +84,10 @@ export default function Login() {
             />
           </div>
 
-          <button type="submit" className="login-submit-button" onClick={()=>Navigate('/')}>
+          <button type="submit" className="login-submit-button" onClick={()=> Navigate('/')}>
             Sign up
           </button>
-          
+          <button className="join-submit-button" onClick={()=> Navigate('/login')}>계정이 없나요? 회원가입</button>
         </form>
 
         {/* 구분선 + 텍스트 */}

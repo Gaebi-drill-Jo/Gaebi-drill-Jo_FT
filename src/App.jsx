@@ -1,6 +1,10 @@
 import Hero from './main_page/Hero_page'
 import Login from './Log/Login'
 import Graph from './graph/graph'
+import Alarm from './alarm/alarm';
+import Join from './Join/Join';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 const dustValues = [
   15,  // index 0 → 3시 pm2.5 값
   22,  // index 1 → 6시 pm2.5 값
@@ -13,9 +17,9 @@ const dustValues = [
 ];
 
 const tempValues = [
-  1, // index 0 → 3시 온도
-  2, // index 1 → 6시
-  25.0, // ...
+  1, 
+  2, 
+  25.0, 
   25.4,
   24.8,
   23.9,
@@ -24,7 +28,7 @@ const tempValues = [
 ];
 
 const humidityValues = [
-  45, // index 0 → 3시 습도
+  45, 
   48,
   50,
   52,
@@ -48,20 +52,25 @@ const xLabels = [
 
 
 
-
 function App() {
 
   return (
-   <>
-  <Hero/>
-  <Login/>
-  <Graph
-  dustValues={dustValues}
-  tempValues={tempValues}
-  humidityValues={humidityValues}
-  xLabels={xLabels}
-/>;
-   </>
+    <Router>
+      <Routes>
+         <Route path="/" element={<Hero />} />
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/graph"
+          element={<Graph
+              dustValues={dustValues}
+              tempValues={tempValues}
+              humidityValues={humidityValues}
+              xLabels={xLabels}/>}
+        />
+        <Route path='Join'element={<Join/>}/>
+        <Route path="/alarm" element={<Alarm />} />
+      </Routes>
+    </Router>
   )
 }
 

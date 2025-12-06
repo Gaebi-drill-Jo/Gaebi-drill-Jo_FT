@@ -1,0 +1,237 @@
+/* 전체 페이지 레이아웃 */
+.login-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+background: #63ABDD;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 32px 16px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+    width: 1920px;
+height: 1080px;
+}
+
+/* 파란 그RADIENT + 구름 배경 */
+.login-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* 뒤쪽 큰 파란 그라데이션 박스 느낌 */
+.login-background-gradient {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1383px;
+height: 897px;
+  transform: translate(-50%, -50%);
+  border-radius: 55px;
+  background: linear-gradient(180deg, #006dbc 0%, #63abdd 100%);
+  box-shadow: 0 30px 19.2px 1px rgba(0, 0, 0, 0.25);
+  opacity: 0.9;
+  border-radius: 55px;
+  background: url(../images/cloud222.png) ightgray -408.085px -352.468px / 172.696% 170.335% no-repeat;
+  border-radius: 55px;
+  
+}
+
+/* 구름 이미지 (약간 확대 + 회전) */
+.login-background-cloud {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 180%;
+  height: 180%;
+  transform: translate(-50%, -50%) rotate(180deg) scaleY(-1);
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+/* 유리 카드 */
+.login-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 640px;
+  padding: 40px 48px 32px;
+  border-radius: 46px;
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-sizing: border-box;
+}
+
+/* 헤더 텍스트 */
+.login-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.login-title {
+  margin: 0 0 8px;
+  font-size: 55px;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.login-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: #e5e7eb;
+}
+
+/* 폼 영역 */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 각 필드 묶음 (Name / Email / Password) */
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* 필드 라벨 */
+.login-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* 언더라인 인풋 스타일 (Figma의 선 + 텍스트 느낌) */
+.login-input {
+  border: none;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.85);
+  padding: 4px 0 8px;
+  background: transparent;
+  font-size: 14px;
+  color: #ffffff;
+  outline: none;
+}
+
+.login-input::placeholder {
+  color: rgba(248, 250, 252, 0.7);
+}
+
+.login-input:focus {
+  border-bottom-color: #00a8ff;
+}
+
+/* Sign up 버튼 */
+.login-submit-button {
+  margin-top: 12px;
+  width: 100%;
+  height: 45px;
+  border-radius: 8px;
+  border: none;
+  background: #0098df;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease,
+    box-shadow 0.1s ease;
+}
+join-submit-button{
+  color: #5A5858;
+text-align: center;
+font-family: "Satoshi Variable";
+font-size: 16px;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+color: #4A4A4A;
+font-family: "Satoshi Variable";
+font-size: 16px;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+}
+.login-submit-button:hover {
+  background: #00a8ff;
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.25);
+  transform: translateY(-1px);
+}
+
+.login-submit-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Or Sign up with 구분선 */
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 32px 0 20px;
+}
+
+.login-divider-line {
+  flex: 1;
+  height: 1.5px;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.login-divider-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+/* 소셜 로그인 버튼 */
+.login-social-row {
+  display: flex;
+  justify-content: center;
+}
+
+.login-social-button {
+  width: 45px;
+  height: 45px;
+  border-radius: 7px;
+  border: none;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  background: transparent;
+}
+
+.login-social-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 반응형 처리 (작은 화면에서 카드 축소) */
+@media (max-width: 768px) {
+  .login-card {
+    padding: 32px 24px 24px;
+    max-width: 420px;
+  }
+
+  .login-title {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 24px 18px 20px;
+    border-radius: 28px;
+  }
+
+  .login-title {
+    font-size: 28px;
+  }
+}

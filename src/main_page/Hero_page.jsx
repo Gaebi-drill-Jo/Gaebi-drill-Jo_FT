@@ -7,10 +7,12 @@ import faceMask from '../images/face-mask.png';
 import humidityIcon from '../images/humidityicon.png';
 import { useEffect, useState } from 'react';
 import mqtt from 'mqtt';
+import { useNavigate } from "react-router-dom";
 
 
 
 function HeroPage() {
+  const Navigate = useNavigate();
   const [Temp,setTemp] = useState(25);
   const [Pm25,setPm25] = useState(25);
   const [Humi,setHumi] = useState(25);
@@ -18,20 +20,15 @@ function HeroPage() {
   const client = mqtt.connect("ws://broker.hivemq.com:8000/mqtt")
   client.on("connect", () => {
   client.subscribe("slide/D~HT")
-  client.subscribe("slide/pm~25")
 });
 client.on("message", (topic, message) => {
 
   if (topic === "slide/D~HT") {
     const data = JSON.parse(message.toString());
-    setTemp(data.temp);
-    setHumi(data.humi);
+    setTemp(data.temperature);
+    setHumi(data.humidity);
+    setPm25(data.pm25);
   }
-
-  if (topic === "slide/pm~25") {
-    setPm25(Number(message.toString()));
-  }
-
 });
 return () => client.end();
 },[]);
@@ -48,8 +45,8 @@ return () => client.end();
             combining hardware and the web.
           </span>
 
-          <button className='get_start'>get_started</button>
-          <button className='view_demo'>view_demo</button>
+          <button className='get_start' onClick={()=> Navigate('/Join')}>get_started</button>
+          <button className='view_demo ' onClick={()=> Navigate('/graph')}>view_demo</button>
         </div>
       </div>
 
@@ -67,8 +64,10 @@ return () => client.end();
                   <span className='metric-value'>{Temp}</span>
                   <span className='metric-unit'>°C</span>
                 </div>
-
-                <p className='metric-status'>더움</p>
+                {Temp > 28 ? (<p className="metric-status hot">더움</p>) : 
+                Temp >= 10 ? (<p className="metric-status normal">보통</p>) : 
+                (<p className="metric-status cold">추움</p>)}
+                
                 <span className='metric-diff'>-1°C</span>
               </div>
 
@@ -81,10 +80,13 @@ return () => client.end();
                   <span className='metric-value'>{Pm25}</span>
                   <span className='metric-unit'>μg/m<sup>3</sup></span>
                 </div>
-
-                <p className='metric-status'>좋음</p>
+                {Pm25 < 15 ? (
+                <p className="metric-status good">좋음</p>) : Pm25 < 50 ? 
+                (<p className="metric-status normal">보통</p>) : 
+                (<p className="metric-status bad">나쁨</p>)}
                 <span className='metric-diff'>+25</span>
               </div>
+              
 
 
               <div className="metric-card metric-divider">
@@ -96,7 +98,9 @@ return () => client.end();
                   <span className='metric-unit'>%</span>
                 </div>
 
-                <p className='metric-status'>습함</p>
+                {Humi >= 60 ? (<p className='metric-status'>습함</p>) : 
+              Humi >= 40 ? (<p className='metric-status'>보통</p>) : 
+              (<p className='metric-status'>건조</p>)}
                 <span className='metric-diff'>-2%</span>
               </div>
 
