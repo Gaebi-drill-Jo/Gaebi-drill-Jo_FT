@@ -1,114 +1,158 @@
-import './He.css';
-import Footer from './Footer';
-import Header from './Header';
-import temperature from '../images/temperature.png';
-import faceMask from '../images/face-mask.png';
-import humidityIcon from '../images/humidityicon.png';
-import { useEffect, useState } from 'react';
-import mqtt from 'mqtt';
+import "./He.css";
+import Footer from "./Footer";
+import Header from "./Header";
+import temperature from "../images/temperature.png";
+import faceMask from "../images/face-mask.png";
+import humidityIcon from "../images/humidityicon.png";
+import { useEffect, useState } from "react";
+import mqtt from "mqtt";
 import { useNavigate } from "react-router-dom";
-import {API_URL} from "../api/client"
-
-
+import { API_URL } from "../api/client";
 
 function HeroPage() {
   const Navigate = useNavigate();
-  const [Temp,setTemp] = useState(25);
-  const [Pm25,setPm25] = useState(25);
-  const [Humi,setHumi] = useState(25);
-  useEffect(()=>{
-  const client = mqtt.connect("wss://broker.hivemq.com:8884/mqtt")
-  client.on("connect", () => {
-  client.subscribe("slide/D~HT")
-});
-client.on("message", (topic, message) => {
+  const [Temp, setTemp] = useState(25);
+  const [Pm25, setPm25] = useState(25);
+  const [Humi, setHumi] = useState(25);
 
-  if (topic === "slide/D~HT") {
-    const data = JSON.parse(message.toString());
-    setTemp(data.temperature);
-    setHumi(data.humidity);
-    setPm25(data.pm25);
-  }
-});
-return () => client.end();
-},[]);
+  useEffect(() => {
+    // ✅ 현재 페이지 프로토콜에 따라 MQTT WebSocket URL 선택
+    const isHttps = window.location.protocol === "https:";
+
+    // HTTPS(배포)에서는 wss, 로컬(http)에서는 ws 사용
+    const mqttUrl = isHttps
+      ? "wss://broker.hivemq.com:8884/mqtt"
+      : "ws://broker.hivemq.com:8000/mqtt";
+
+    const client = mqtt.connect(mqttUrl);
+
+    client.on("connect", () => {
+      client.subscribe("slide/D~HT");
+    });
+
+    client.on("message", (topic, message) => {
+      try {
+        if (topic === "slide/D~HT") {
+          const data = JSON.parse(message.toString());
+          setTemp(data.temperature);
+          setHumi(data.humidity);
+          setPm25(data.pm25);
+        }
+      } catch (e) {
+        console.error("MQTT message parse error:", e);
+      }
+    });
+
+    client.on("error", (err) => {
+      console.error("MQTT error:", err);
+    });
+
+    return () => {
+      client.end();
+    };
+  }, []);
 
   return (
-    <div className='Hero'>
+    <div className="Hero">
       <Header />
-      <div className='middle'>
-        <span className="middle_Title">SMART AIR<br/>ANALYZE</span>
+      <div className="middle">
+        <span className="middle_Title">
+          SMART AIR
+          <br />
+          ANALYZE
+        </span>
         <div>
           <span className="middle_text">
-            We spent three months researching and<br/>
-            developing an atmospheric analysis system,<br/>
+            We spent three months researching and
+            <br />
+            developing an atmospheric analysis system,
+            <br />
             combining hardware and the web.
           </span>
 
-          <button className='get_start' onClick={()=> Navigate('/Join')}>get_started</button>
-          <button className='view_demo ' onClick={()=> Navigate('/graph')}>view_demo</button>
+          <button className="get_start" onClick={() => Navigate("/Join")}>
+            get_started
+          </button>
+          <button className="view_demo" onClick={() => Navigate("/graph")}>
+            view_demo
+          </button>
         </div>
       </div>
 
-      <div className='Hero_con'>
-        <div className='Hero_block'>
-          <div className='Hero_div'>
-            <div className='metrics-container'>
-
-
+      <div className="Hero_con">
+        <div className="Hero_block">
+          <div className="Hero_div">
+            <div className="metrics-container">
+              {/* 온도 카드 */}
               <div className="metric-card">
-                <img src={temperature} alt="온도" className='metric-icon' />
-                <p className='metric-title'>온도</p>
+                <img src={temperature} alt="온도" className="metric-icon" />
+                <p className="metric-title">온도</p>
 
-                <div className='metric-main'>
-                  <span className='metric-value'>{Temp}</span>
-                  <span className='metric-unit'>°C</span>
+                <div className="metric-main">
+                  <span className="metric-value">{Temp}</span>
+                  <span className="metric-unit">°C</span>
                 </div>
-                {Temp > 28 ? (<p className="metric-status hot">더움</p>) : 
-                Temp >= 10 ? (<p className="metric-status normal">보통</p>) : 
-                (<p className="metric-status cold">추움</p>)}
-                
-                <span className='metric-diff'>-1°C</span>
+
+                {Temp > 28 ? (
+                  <p className="metric-status hot">더움</p>
+                ) : Temp >= 10 ? (
+                  <p className="metric-status normal">보통</p>
+                ) : (
+                  <p className="metric-status cold">추움</p>
+                )}
+
+                <span className="metric-diff">-1°C</span>
               </div>
 
-
+              {/* 미세먼지 카드 */}
               <div className="metric-card metric-divider">
-                <img src={faceMask} alt="미세먼지" className='metric-icon' />
-                <p className='metric-title'>미세먼지</p>
+                <img src={faceMask} alt="미세먼지" className="metric-icon" />
+                <p className="metric-title">미세먼지</p>
 
-                <div className='metric-main'>
-                  <span className='metric-value'>{Pm25}</span>
-                  <span className='metric-unit'>μg/m<sup>3</sup></span>
+                <div className="metric-main">
+                  <span className="metric-value">{Pm25}</span>
+                  <span className="metric-unit">
+                    μg/m<sup>3</sup>
+                  </span>
                 </div>
+
                 {Pm25 < 15 ? (
-                <p className="metric-status good">좋음</p>) : Pm25 < 50 ? 
-                (<p className="metric-status normal">보통</p>) : 
-                (<p className="metric-status bad">나쁨</p>)}
-                <span className='metric-diff'>+25</span>
+                  <p className="metric-status good">좋음</p>
+                ) : Pm25 < 50 ? (
+                  <p className="metric-status normal">보통</p>
+                ) : (
+                  <p className="metric-status bad">나쁨</p>
+                )}
+
+                <span className="metric-diff">+25</span>
               </div>
-              
 
-
+              {/* 습도 카드 */}
               <div className="metric-card metric-divider">
-                <img src={humidityIcon} alt="습도" className='metric-icon' />
-                <p className='metric-title'>습도</p>
+                <img src={humidityIcon} alt="습도" className="metric-icon" />
+                <p className="metric-title">습도</p>
 
-                <div className='metric-main'>
-                  <span className='metric-value'>{Humi}</span>
-                  <span className='metric-unit'>%</span>
+                <div className="metric-main">
+                  <span className="metric-value">{Humi}</span>
+                  <span className="metric-unit">%</span>
                 </div>
 
-                {Humi >= 60 ? (<p className='metric-status'>습함</p>) : 
-              Humi >= 40 ? (<p className='metric-status'>보통</p>) : 
-              (<p className='metric-status'>건조</p>)}
-                <span className='metric-diff'>-2%</span>
-              </div>
+                {Humi >= 60 ? (
+                  <p className="metric-status">습함</p>
+                ) : Humi >= 40 ? (
+                  <p className="metric-status">보통</p>
+                ) : (
+                  <p className="metric-status">건조</p>
+                )}
 
+                <span className="metric-diff">-2%</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div className = "footer_shadow"></div>
+
+      <div className="footer_shadow"></div>
       <Footer />
     </div>
   );
