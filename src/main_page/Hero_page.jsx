@@ -1,5 +1,4 @@
 import './He.css';
-import cloud from '../images/Cloud.png'
 import Footer from './Footer';
 import Header from './Header';
 import temperature from '../images/temperature.png';
