@@ -1,7 +1,7 @@
 // Join.jsx
 import React, { useState } from "react";
 import "./Join.css";
-import cloude222 from "../images/cloud.png";
+import cloud from "../images/cloud.png";
 import { useNavigate } from "react-router-dom";
 import {API_URL} from "../api/client"
 
@@ -73,7 +73,7 @@ export default function Join() {
       <div className="login-background"></div>
       <div className="login-background-gradient" />
       <img
-        src={cloude222}
+        src={cloud}
         alt=""
         className="login-background-cloud"
       />
