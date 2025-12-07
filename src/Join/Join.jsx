@@ -1,7 +1,6 @@
-// Join.jsx
 import React, { useState } from "react";
 import "./Join.css";
-import cloud from "../images/cloud.png";
+import cloud from '../images/cloud.png'
 import { useNavigate } from "react-router-dom";
 import {API_URL} from "../api/client"
 
