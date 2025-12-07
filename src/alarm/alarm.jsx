@@ -12,6 +12,9 @@ export default function Alarm() {
   // 습도
   const [humUpper, setHumUpper] = useState("");
   const [humLower, setHumLower] = useState("");
+  // Time (분 단위 예시)
+  const [timeStart, setTimeStart] = useState("");
+  const [timeInterval, setTimeInterval] = useState("");
 
   const [status, setStatus] = useState(null);
 
@@ -25,6 +28,8 @@ export default function Alarm() {
       temp_lower: tempLower === "" ? null : Number(tempLower),
       humidity_upper: humUpper === "" ? null : Number(humUpper),
       humidity_lower: humLower === "" ? null : Number(humLower),
+      time_start: timeStart === "" ? null : Number(timeStart),
+      time_interval: timeInterval === "" ? null : Number(timeInterval),
     };
 
     try {
@@ -59,9 +64,9 @@ export default function Alarm() {
             <div className="alarm-column-header">습도</div>
           </div>
 
-          {/* 컨트롤 영역 */}
+          {/* 상단 칩들 */}
           <div className="alarm-columns">
-            {/* ---- 미세먼지 ---- */}
+            {/* 미세먼지 */}
             <div className="alarm-column">
               <div className="alarm-chip-row">
                 <div className="alarm-chip">
@@ -74,7 +79,7 @@ export default function Alarm() {
                       value={pmUpper}
                       onChange={(e) => setPmUpper(e.target.value)}
                     />
-                    <span className="alarm-chip-arrow">▾</span>
+                    <span className="alarm-chip-arrow">︿</span>
                   </div>
                 </div>
               </div>
@@ -89,13 +94,13 @@ export default function Alarm() {
                       value={pmLower}
                       onChange={(e) => setPmLower(e.target.value)}
                     />
-                    <span className="alarm-chip-arrow">▾</span>
+                    <span className="alarm-chip-arrow">︿</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* ---- 온도 ---- */}
+            {/* 온도 */}
             <div className="alarm-column">
               <div className="alarm-chip-row">
                 <div className="alarm-chip">
@@ -109,7 +114,7 @@ export default function Alarm() {
                       onChange={(e) => setTempUpper(e.target.value)}
                     />
                     <span className="alarm-chip-unit">℃</span>
-                    <span className="alarm-chip-arrow">▾</span>
+                    <span className="alarm-chip-arrow">︿</span>
                   </div>
                 </div>
               </div>
@@ -125,13 +130,13 @@ export default function Alarm() {
                       onChange={(e) => setTempLower(e.target.value)}
                     />
                     <span className="alarm-chip-unit">℃</span>
-                    <span className="alarm-chip-arrow">▾</span>
+                    <span className="alarm-chip-arrow">︿</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* ---- 습도 ---- */}
+            {/* 습도 */}
             <div className="alarm-column">
               <div className="alarm-chip-row">
                 <div className="alarm-chip">
@@ -145,7 +150,7 @@ export default function Alarm() {
                       onChange={(e) => setHumUpper(e.target.value)}
                     />
                     <span className="alarm-chip-unit">%</span>
-                    <span className="alarm-chip-arrow">▾</span>
+                    <span className="alarm-chip-arrow">︿</span>
                   </div>
                 </div>
               </div>
@@ -161,26 +166,48 @@ export default function Alarm() {
                       onChange={(e) => setHumLower(e.target.value)}
                     />
                     <span className="alarm-chip-unit">%</span>
-                    <span className="alarm-chip-arrow">▾</span>
+                    <span className="alarm-chip-arrow">︿</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* 하단 전송 버튼 + 상태 메시지 */}
-          <div className="alarm-footer">
-            {status === "success" && (
-              <span className="alarm-status alarm-status-success">
-                저장되었습니다
-              </span>
-            )}
-            {status === "error" && (
-              <span className="alarm-status alarm-status-error">
-                저장에 실패했습니다
-              </span>
-            )}
+          {/* Time 영역 */}
+          <div className="alarm-time-section">
+            <div className="alarm-time-label">Time</div>
+            <div className="alarm-time-input-row">
+              <input
+                className="alarm-time-input"
+                type="number"
+                placeholder="Start (min)"
+                value={timeStart}
+                onChange={(e) => setTimeStart(e.target.value)}
+              />
+              <input
+                className="alarm-time-input"
+                type="number"
+                placeholder="Interval (min)"
+                value={timeInterval}
+                onChange={(e) => setTimeInterval(e.target.value)}
+              />
+            </div>
+          </div>
 
+          {/* 하단 버튼 + 상태 */}
+          <div className="alarm-footer">
+            <div className="alarm-status-wrap">
+              {status === "success" && (
+                <span className="alarm-status alarm-status-success">
+                  저장되었습니다
+                </span>
+              )}
+              {status === "error" && (
+                <span className="alarm-status alarm-status-error">
+                  저장에 실패했습니다
+                </span>
+              )}
+            </div>
             <button type="submit" className="alarm-submit-button">
               전송
             </button>
