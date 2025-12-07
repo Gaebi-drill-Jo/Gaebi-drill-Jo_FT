@@ -137,7 +137,7 @@ function Header() {
         <button
           className="menu_le"
           type="button"
-          onClick={() => navigate("/feedback")}
+          onClick={() => alert("아직 구현중인 기능입니다.")} //navigate("/feedback")}
         >
           AI피드백
         </button>
