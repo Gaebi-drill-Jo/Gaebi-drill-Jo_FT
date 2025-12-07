@@ -1,4 +1,25 @@
 /* 전체 페이지 레이아웃 */
+/* 페이지 전체 래퍼 */
+.login-page {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+
+  /* ✅ 중앙 정렬 핵심 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* 원래 쓰시던 배경 그대로 유지해도 됨 */
+  background: linear-gradient(
+    180deg,
+    #79c8ff 0%,
+    #4da5e5 40%,
+    #2d79c7 100%
+  );
+}
+
 .login-page {
   position: relative;
   min-height: 100vh;

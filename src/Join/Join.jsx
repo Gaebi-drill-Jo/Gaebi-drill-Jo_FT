@@ -1,44 +1,85 @@
-// Login.jsx
-import React from "react";
+// Join.jsx
+import React, { useState } from "react";
 import "./Join.css";
-import cloude222 from '../images/cloud.png'
+import cloude222 from "../images/cloud.png";
 import { useNavigate } from "react-router-dom";
-// 배경 구름 이미지
-const cloudBackgroundUrl =
-  "https://www.figma.com/api/mcp/asset/e43512d3-24d6-4941-a6b5-a09f913da012";
+import {API_URL} from "../api/client"
 
-// 소셜 로그인 아이콘 이미지
 const socialLoginImageUrl =
   "https://www.figma.com/api/mcp/asset/beceb4fd-fec7-4a82-8ce0-681f7357c2d2";
 
-export default function Login() {
-  const Navigate = useNavigate();
-  // 로그인 폼 제출
-  const handleSubmit = (event) => {
+export default function Join() {
+  const navigate = useNavigate();
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [status, setStatus] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // TODO: 실제 회원가입/로그인 로직 연결
+    setStatus(null);
+    setErrorMessage("");
+
+    const payload = {
+      username: name,
+      useremail: email,
+      password: password,
+    };
+
+    try {
+      const res = await fetch(`${API_URL}/users`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        let errBody = null;
+        const contentType = res.headers.get("Content-Type") || "";
+        if (contentType.includes("application/json")) {
+          errBody = await res.json();
+        }
+
+        if (res.status === 409 && errBody && errBody.detail) {
+          // "Username already exists" / "Useremail already exists"
+          setErrorMessage(errBody.detail);
+        } else {
+          setErrorMessage("회원가입 중 오류가 발생했습니다.");
+        }
+        setStatus("error");
+        return;
+      }
+
+      const data = await res.json();
+      console.log("SIGNUP OK:", data);
+      setStatus("success");
+      // ✅ 회원가입 후 로그인 페이지로 이동
+      navigate("/login");
+    } catch (err) {
+      console.error("SIGNUP NETWORK ERROR:", err);
+      setErrorMessage("네트워크 오류로 회원가입에 실패했습니다.");
+      setStatus("error");
+    }
   };
 
   return (
     <div className="login-page">
-      {/* 전체 파란 배경 + 구름 이미지 */}
-      <div className="login-background">
-        
-      </div>
+      {/* 배경 */}
+      <div className="login-background"></div>
       <div className="login-background-gradient" />
-      {/* <img
-          src={cloudBackgroundUrl}
-          alt="Cloud background"
-          className="login-background-cloud"
-        /> */}
-        <img src="cloude222" alt="" />
-        
+      <img
+        src={cloude222}
+        alt=""
+        className="login-background-cloud"
+      />
 
-      {/* 유리 카드 */}
+      {/* 카드 */}
       <div className="login-card">
-        
-        
-        {/* 타이틀 영역 */}
         <header className="login-header">
           <h1 className="login-title">Get Started</h1>
           <p className="login-subtitle">
@@ -46,7 +87,6 @@ export default function Login() {
           </p>
         </header>
 
-        {/* 입력 폼 */}
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="login-field">
             <label htmlFor="name" className="login-label">
@@ -57,6 +97,9 @@ export default function Login() {
               type="text"
               className="login-input"
               placeholder="Your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
             />
           </div>
 
@@ -69,6 +112,9 @@ export default function Login() {
               type="email"
               className="login-input"
               placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
 
@@ -81,28 +127,41 @@ export default function Login() {
               type="password"
               className="login-input"
               placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
 
-          <button type="submit" className="login-submit-button" onClick={()=> Navigate('/')}>
+          <button type="submit" className="login-submit-button">
             Sign up
           </button>
-          <button className="join-submit-button" onClick={()=> Navigate('/login')}>계정이 없나요? 회원가입</button>
+
+          <button
+            type="button"
+            className="join-submit-button"
+            onClick={() => navigate("/login")}
+          >
+            이미 계정이 있나요? 로그인
+          </button>
+
+          {status === "error" && (
+            <p style={{ color: "red", marginTop: "8px" }}>
+              {errorMessage || "회원가입에 실패했습니다."}
+            </p>
+          )}
         </form>
 
-        {/* 구분선 + 텍스트 */}
         <div className="login-divider">
           <span className="login-divider-line" />
           <span className="login-divider-text">Or Sign up with</span>
           <span className="login-divider-line" />
         </div>
 
-        {/* 소셜 로그인 버튼 */}
         <div className="login-social-row">
           <button
             type="button"
             className="login-social-button"
-            // TODO: 소셜 로그인 핸들러 연결
           >
             <img
               src={socialLoginImageUrl}

@@ -1,5 +1,7 @@
 // graph.jsx
+import { useEffect, useState } from "react";
 import "./graph.css";
+import {API_URL} from "../api/client"
 
 const imgCloud =
   "https://www.figma.com/api/mcp/asset/850ac4b5-1aae-4398-be1f-653f74eaa36c";
@@ -9,11 +11,6 @@ const imgEllipse34 =
   "https://www.figma.com/api/mcp/asset/e736d65a-2336-411a-b2e8-0ca3adce443b";
 const imgEllipse35 =
   "https://www.figma.com/api/mcp/asset/df5dec31-a283-4f46-a5e2-58f52334f156";
-
-/* ===========================
-   1. 그래프 영역: 숫자 배열만 사용
-   =========================== */
-
 const GRAPH_WIDTH = 800;
 const GRAPH_HEIGHT = 400;
 const PADDING_X = 40;
@@ -44,12 +41,6 @@ function buildAreaPath(values, maxValue) {
   return d;
 }
 
-/**
- * props
- * - dust:     number[]
- * - temp:     number[]
- * - humidity: number[]
- */
 function GraphArea({ dust, temp, humidity }) {
   const safeDust = dust ?? [];
   const safeTemp = temp ?? [];
@@ -76,21 +67,21 @@ function GraphArea({ dust, temp, humidity }) {
           <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
         </linearGradient>
 
-        {/* 미세먼지 영역(노랑 → 투명) */}
+        {/* 미세먼지 영역 */}
         <linearGradient id="dustGradient" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#ffe08a" stopOpacity="0.9" />
           <stop offset="50%" stopColor="#ffc94a" stopOpacity="0.6" />
           <stop offset="100%" stopColor="#ffb800" stopOpacity="0.15" />
         </linearGradient>
 
-        {/* 온도 영역(주황/빨강 → 투명) */}
+        {/* 온도 영역 */}
         <linearGradient id="tempGradient" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#ff9f7b" stopOpacity="0.9" />
           <stop offset="50%" stopColor="#ff6b5a" stopOpacity="0.6" />
           <stop offset="100%" stopColor="#ff4b4b" stopOpacity="0.15" />
         </linearGradient>
 
-        {/* 습도 영역(하늘색/파랑 → 투명) */}
+        {/* 습도 영역 */}
         <linearGradient id="humidityGradient" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#6cd5ff" stopOpacity="0.9" />
           <stop offset="50%" stopColor="#30b3ff" stopOpacity="0.6" />
@@ -146,31 +137,67 @@ function GraphArea({ dust, temp, humidity }) {
   );
 }
 
-/* ===========================
-   2. 메인 컴포넌트
-   =========================== */
+export default function Graph() {
+  const [dustValues, setDustValues] = useState([]);
+  const [tempValues, setTempValues] = useState([]);
+  const [humidityValues, setHumidityValues] = useState([]);
+  const [labels, setLabels] = useState([]);
+  const [status, setStatus] = useState("loading"); // loading | ok | error
 
-/**
- * Graph 컴포넌트가 외부에서 받는 props (전부 숫자 기반):
- *
- * - dustValues:     number[]          // 미세먼지 시계열
- * - tempValues:     number[]          // 온도 시계열
- * - humidityValues: number[]          // 습도 시계열
- * - xLabels:        (number|string)[] // X축 라벨 (예: [3,6,9,...] or "03시" 등)
- *
- * MQTT에서 받은 값을 가공해서 이 props로 넘겨주시면 됩니다.
- */
-export default function Graph({
-  dustValues,
-  tempValues,
-  humidityValues,
-  xLabels,
-}) {
-  // X축 라벨이 안 들어오면 기본 8개 (3~24)를 임시로 사용
-  const labels =
-    xLabels && xLabels.length > 0
-      ? xLabels
-      : [3, 6, 9, 12, 15, 18, 21, 24];
+  useEffect(() => {
+    const fetchGraph = async () => {
+      try {
+        setStatus("loading");
+        const res = await fetch("http://localhost:8000/graph");
+        if (!res.ok) {
+          console.error("GET /graph ERROR:", res.status);
+          setStatus("error");
+          return;
+        }
+
+        const data = await res.json();
+        const pointsArray = Array.isArray(data.points)
+          ? [...data.points].reverse()
+          : [];
+
+        const dust = pointsArray.map((p) =>
+          typeof p.pm25 === "number" ? p.pm25 : 0
+        );
+        const temp = pointsArray.map((p) =>
+          typeof p.temperature === "number" ? p.temperature : 0
+        );
+        const hum = pointsArray.map((p) =>
+          typeof p.humidity === "number" ? p.humidity : 0
+        );
+
+        const labelList = pointsArray.map((p) => {
+          if (!p.created_at) return "";
+          const date = new Date(p.created_at);
+          if (Number.isNaN(date.getTime())) return "";
+          return date.toLocaleTimeString("ko-KR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        });
+
+        setDustValues(dust);
+        setTempValues(temp);
+        setHumidityValues(hum);
+        setLabels(labelList);
+        setStatus("ok");
+      } catch (e) {
+        console.error("GRAPH NETWORK ERROR:", e);
+        setStatus("error");
+      }
+    };
+
+    fetchGraph();
+  }, []);
+
+  const xLabels =
+    labels.length > 0
+      ? labels
+      : ["03시", "06시", "09시", "12시", "15시", "18시", "21시", "24시"];
 
   return (
     <div className="graph-root" data-node-id="414:149">
@@ -197,7 +224,7 @@ export default function Graph({
           <div className="graph-bottom-glow" data-node-id="431:116" />
         </div>
 
-        {/* 동적 그래프 영역 (값은 전부 숫자 배열에서 옴) */}
+        {/* 메인 그래프 영역 */}
         <div
           className="graph-main"
           data-name="그래프"
@@ -208,48 +235,44 @@ export default function Graph({
             temp={tempValues}
             humidity={humidityValues}
           />
+          {status === "loading" && (
+            <div className="graph-status-label">데이터 불러오는 중...</div>
+          )}
+          {status === "error" && (
+            <div className="graph-status-label graph-status-error">
+              데이터를 불러오지 못했습니다.
+            </div>
+          )}
         </div>
 
-        {/* Y축 수치(0~100 텍스트) */}
+        {/* Y축 수치 */}
         <div
           className="graph-y-labels"
           data-name="수치"
           data-node-id="441:6"
         >
-          <p className="graph-y-label graph-y-label-100" data-node-id="414:926">
-            100
-          </p>
-          <p className="graph-y-label graph-y-label-80" data-node-id="414:927">
-            80
-          </p>
-          <p className="graph-y-label graph-y-label-60" data-node-id="414:929">
-            60
-          </p>
-          <p className="graph-y-label graph-y-label-40" data-node-id="414:931">
-            40
-          </p>
-          <p className="graph-y-label graph-y-label-20" data-node-id="414:933">
-            20
-          </p>
-          <p className="graph-y-label graph-y-label-0" data-node-id="414:935">
-            0
-          </p>
+          <p className="graph-y-label">100</p>
+          <p className="graph-y-label">80</p>
+          <p className="graph-y-label">60</p>
+          <p className="graph-y-label">40</p>
+          <p className="graph-y-label">20</p>
+          <p className="graph-y-label">0</p>
         </div>
 
-        {/* X축 시각: 숫자/문자 배열로 외부에서 받음 */}
+        {/* X축 시각 */}
         <div
           className="graph-x-labels"
           data-name="시"
           data-node-id="441:7"
         >
-          {labels.map((label, idx) => (
-            <p key={idx} className="graph-x-label">
+          {xLabels.map((label, index) => (
+            <p key={index} className="graph-x-label">
               {label}
             </p>
           ))}
         </div>
 
-        {/* 범례 (텍스트/색 이름은 그대로 유지) */}
+        {/* 범례 */}
         <div
           className="graph-legend"
           data-name="그래프색상가이드"
@@ -259,27 +282,21 @@ export default function Graph({
             <span className="graph-legend-dot">
               <img alt="" src={imgEllipse33} />
             </span>
-            <span className="graph-legend-text" data-node-id="418:993">
-              미세먼지
-            </span>
+            <span className="graph-legend-text">미세먼지</span>
           </div>
 
           <div className="graph-legend-item" data-node-id="441:3">
             <span className="graph-legend-dot">
               <img alt="" src={imgEllipse34} />
             </span>
-            <span className="graph-legend-text" data-node-id="418:994">
-              온도
-            </span>
+            <span className="graph-legend-text">온도</span>
           </div>
 
           <div className="graph-legend-item" data-node-id="441:2">
             <span className="graph-legend-dot">
               <img alt="" src={imgEllipse35} />
             </span>
-            <span className="graph-legend-text" data-node-id="418:995">
-              습도
-            </span>
+            <span className="graph-legend-text">습도</span>
           </div>
         </div>
       </div>

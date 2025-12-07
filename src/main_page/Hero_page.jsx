@@ -8,6 +8,7 @@ import humidityIcon from '../images/humidityicon.png';
 import { useEffect, useState } from 'react';
 import mqtt from 'mqtt';
 import { useNavigate } from "react-router-dom";
+import {API_URL} from "../api/client"
 
 
 
