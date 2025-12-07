@@ -17,7 +17,7 @@ function HeroPage() {
   const [Pm25,setPm25] = useState(25);
   const [Humi,setHumi] = useState(25);
   useEffect(()=>{
-  const client = mqtt.connect("ws://broker.hivemq.com:8000/mqtt")
+  const client = mqtt.connect("wss://broker.hivemq.com:8884/mqtt")
   client.on("connect", () => {
   client.subscribe("slide/D~HT")
 });
