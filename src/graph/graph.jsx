@@ -1,8 +1,9 @@
-// graph.jsx
+// src/Graph/graph.jsx
 import { useEffect, useState } from "react";
 import "./graph.css";
-import {API_URL} from "../api/client"
+import { API_URL } from "../api/client";
 
+// Figma 이미지 리소스
 const imgCloud =
   "https://www.figma.com/api/mcp/asset/850ac4b5-1aae-4398-be1f-653f74eaa36c";
 const imgEllipse33 =
@@ -11,47 +12,74 @@ const imgEllipse34 =
   "https://www.figma.com/api/mcp/asset/e736d65a-2336-411a-b2e8-0ca3adce443b";
 const imgEllipse35 =
   "https://www.figma.com/api/mcp/asset/df5dec31-a283-4f46-a5e2-58f52334f156";
+
+// SVG 사이즈 & 패딩
 const GRAPH_WIDTH = 800;
 const GRAPH_HEIGHT = 400;
 const PADDING_X = 40;
 const PADDING_Y = 40;
 
-function buildAreaPath(values, maxValue) {
-  if (!values || values.length === 0 || !maxValue) return "";
+/** 한 개 시리즈를 선으로 그릴 path 생성 (글로벌 min/max 기준) */
+function buildLinePath(values, minVal, maxVal) {
+  if (!values || values.length === 0) return "";
 
   const innerWidth = GRAPH_WIDTH - PADDING_X * 2;
   const innerHeight = GRAPH_HEIGHT - PADDING_Y * 2;
   const bottomY = GRAPH_HEIGHT - PADDING_Y;
-  const stepX = values.length > 1 ? innerWidth / (values.length - 1) : 0;
+  const range = maxVal - minVal || 1;
+
+  const stepX =
+    values.length > 1 ? innerWidth / (values.length - 1) : 0;
 
   let d = "";
 
   values.forEach((v, i) => {
+    let n = (v - minVal) / range; // 0~1
+    if (n < 0) n = 0;
+    if (n > 1) n = 1;
+
     const x = PADDING_X + stepX * i;
-    const y = bottomY - (v / maxValue) * innerHeight;
+    const y = bottomY - n * innerHeight;
 
     if (i === 0) d += `M ${x} ${y}`;
     else d += ` L ${x} ${y}`;
   });
 
-  const lastX = PADDING_X + stepX * (values.length - 1);
-  const firstX = PADDING_X;
-
-  d += ` L ${lastX} ${bottomY} L ${firstX} ${bottomY} Z`;
   return d;
 }
 
+/**
+ * 실제 그래프 영역
+ * - 미세먼지/온도/습도 모두 같은 글로벌 min~max 기준으로 스케일
+ * - 전부 "선"만 그림 (fill 없음) → 더 이상 위에서 덩어리로 안 보임
+ */
 function GraphArea({ dust, temp, humidity }) {
-  const safeDust = dust ?? [];
-  const safeTemp = temp ?? [];
-  const safeHumidity = humidity ?? [];
+  const safeDust = Array.isArray(dust) ? dust : [];
+  const safeTemp = Array.isArray(temp) ? temp : [];
+  const safeHumidity = Array.isArray(humidity) ? humidity : [];
 
-  const allValues = [...safeDust, ...safeTemp, ...safeHumidity];
-  const maxValue = allValues.length > 0 ? Math.max(...allValues) : 1;
+  const allValues = [
+    ...safeDust,
+    ...safeTemp,
+    ...safeHumidity,
+  ].filter((v) => typeof v === "number" && !Number.isNaN(v));
 
-  const dustPath = buildAreaPath(safeDust, maxValue);
-  const tempPath = buildAreaPath(safeTemp, maxValue);
-  const humidityPath = buildAreaPath(safeHumidity, maxValue);
+  let minVal = 0;
+  let maxVal = 1;
+
+  if (allValues.length > 0) {
+    minVal = Math.min(...allValues);
+    maxVal = Math.max(...allValues);
+    if (minVal === maxVal) {
+      // 전부 같은 값일 때는 약간 범위를 만들어 줌
+      minVal -= 1;
+      maxVal += 1;
+    }
+  }
+
+  const dustPath = buildLinePath(safeDust, minVal, maxVal);
+  const tempPath = buildLinePath(safeTemp, minVal, maxVal);
+  const humidityPath = buildLinePath(safeHumidity, minVal, maxVal);
 
   return (
     <svg
@@ -65,27 +93,6 @@ function GraphArea({ dust, temp, humidity }) {
         <linearGradient id="cardGradient" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="rgba(255,255,255,0.55)" />
           <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
-        </linearGradient>
-
-        {/* 미세먼지 영역 */}
-        <linearGradient id="dustGradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#ffe08a" stopOpacity="0.9" />
-          <stop offset="50%" stopColor="#ffc94a" stopOpacity="0.6" />
-          <stop offset="100%" stopColor="#ffb800" stopOpacity="0.15" />
-        </linearGradient>
-
-        {/* 온도 영역 */}
-        <linearGradient id="tempGradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#ff9f7b" stopOpacity="0.9" />
-          <stop offset="50%" stopColor="#ff6b5a" stopOpacity="0.6" />
-          <stop offset="100%" stopColor="#ff4b4b" stopOpacity="0.15" />
-        </linearGradient>
-
-        {/* 습도 영역 */}
-        <linearGradient id="humidityGradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#6cd5ff" stopOpacity="0.9" />
-          <stop offset="50%" stopColor="#30b3ff" stopOpacity="0.6" />
-          <stop offset="100%" stopColor="#0090ff" stopOpacity="0.15" />
         </linearGradient>
       </defs>
 
@@ -117,38 +124,43 @@ function GraphArea({ dust, temp, humidity }) {
         );
       })}
 
-      {/* 미세먼지 / 온도 / 습도 영역 */}
+      {/* 선 그래프들 */}
+      <path
+        d={humidityPath}
+        className="graph-line graph-line-humidity"
+        fill="none"
+      />
       <path
         d={dustPath}
-        className="graph-area graph-area-dust"
-        fill="url(#dustGradient)"
+        className="graph-line graph-line-dust"
+        fill="none"
       />
       <path
         d={tempPath}
-        className="graph-area graph-area-temp"
-        fill="url(#tempGradient)"
-      />
-      <path
-        d={humidityPath}
-        className="graph-area graph-area-humidity"
-        fill="url(#humidityGradient)"
+        className="graph-line graph-line-temp"
+        fill="none"
       />
     </svg>
   );
 }
 
+/**
+ * 메인 그래프 페이지
+ * - /graph API에서 DataPoint 리스트 그대로 가져옴
+ * - X축 라벨은 1시~24시 고정 (디자인용)
+ */
 export default function Graph() {
   const [dustValues, setDustValues] = useState([]);
   const [tempValues, setTempValues] = useState([]);
   const [humidityValues, setHumidityValues] = useState([]);
-  const [labels, setLabels] = useState([]);
   const [status, setStatus] = useState("loading"); // loading | ok | error
 
   useEffect(() => {
     const fetchGraph = async () => {
       try {
         setStatus("loading");
-        const res = await fetch("http://localhost:8000/graph");
+
+        const res = await fetch(`${API_URL}/graph`);
         if (!res.ok) {
           console.error("GET /graph ERROR:", res.status);
           setStatus("error");
@@ -156,34 +168,25 @@ export default function Graph() {
         }
 
         const data = await res.json();
+
+        // 최신 순(내림차순)으로 오니까 → 시간 순으로 보기 위해 뒤집기
         const pointsArray = Array.isArray(data.points)
           ? [...data.points].reverse()
           : [];
 
-        const dust = pointsArray.map((p) =>
+        const dustRaw = pointsArray.map((p) =>
           typeof p.pm25 === "number" ? p.pm25 : 0
         );
-        const temp = pointsArray.map((p) =>
+        const tempRaw = pointsArray.map((p) =>
           typeof p.temperature === "number" ? p.temperature : 0
         );
-        const hum = pointsArray.map((p) =>
+        const humRaw = pointsArray.map((p) =>
           typeof p.humidity === "number" ? p.humidity : 0
         );
 
-        const labelList = pointsArray.map((p) => {
-          if (!p.created_at) return "";
-          const date = new Date(p.created_at);
-          if (Number.isNaN(date.getTime())) return "";
-          return date.toLocaleTimeString("ko-KR", {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-        });
-
-        setDustValues(dust);
-        setTempValues(temp);
-        setHumidityValues(hum);
-        setLabels(labelList);
+        setDustValues(dustRaw);
+        setTempValues(tempRaw);
+        setHumidityValues(humRaw);
         setStatus("ok");
       } catch (e) {
         console.error("GRAPH NETWORK ERROR:", e);
@@ -194,10 +197,18 @@ export default function Graph() {
     fetchGraph();
   }, []);
 
-  const xLabels =
-    labels.length > 0
-      ? labels
-      : ["03시", "06시", "09시", "12시", "15시", "18시", "21시", "24시"];
+  // X축: 하루 주기 고정 라벨 (디자인)
+  const xLabels = [
+    "1시",
+    "3시",
+    "6시",
+    "9시",
+    "12시",
+    "15시",
+    "18시",
+    "21시",
+    "24시",
+  ];
 
   return (
     <div className="graph-root" data-node-id="414:149">
@@ -235,6 +246,7 @@ export default function Graph() {
             temp={tempValues}
             humidity={humidityValues}
           />
+
           {status === "loading" && (
             <div className="graph-status-label">데이터 불러오는 중...</div>
           )}
@@ -245,7 +257,7 @@ export default function Graph() {
           )}
         </div>
 
-        {/* Y축 수치 */}
+        {/* Y축 수치 (디자인 고정) */}
         <div
           className="graph-y-labels"
           data-name="수치"
@@ -259,7 +271,7 @@ export default function Graph() {
           <p className="graph-y-label">0</p>
         </div>
 
-        {/* X축 시각 */}
+        {/* X축 시각: 1시~24시 고정 */}
         <div
           className="graph-x-labels"
           data-name="시"

@@ -254,3 +254,69 @@
   line-height: 1.2;
   color: #ffffff;
 }
+/* 그래프 SVG 기본 */
+.graph-svg {
+  width: 100%;
+  height: auto;
+}
+
+/* 공통 영역 스타일 */
+.graph-area {
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* 미세먼지(노랑) */
+.graph-area-dust {
+  stroke: #ffc800;
+  stroke-width: 2;
+  fill-opacity: 0.35;
+}
+
+/* 온도(빨강) */
+.graph-area-temp {
+  stroke: #ff4b4b;
+  stroke-width: 2;
+  fill-opacity: 0.25;
+}
+
+/* 습도(파랑) – 너무 진해서 문제였으니까 더 옅게 */
+.graph-area-humidity {
+  stroke: #4dbbff;
+  stroke-width: 2;
+  fill-opacity: 0.18;  /* 필요하면 0.1까지 낮춰도 됨 */
+}
+.graph-svg {
+  width: 100%;
+  height: auto;
+}
+
+/* 공통 선 스타일 */
+.graph-line {
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  fill: none;
+}
+
+/* 습도(파랑) – 제일 위쪽에 보이니까 살짝 투명도 낮게 */
+.graph-line-humidity {
+  stroke: #4dbbff;
+  stroke-width: 2;
+  opacity: 0.7;
+}
+
+/* 미세먼지(노랑) */
+.graph-line-dust {
+  stroke: #ffc800;
+  stroke-width: 2;
+  opacity: 0.9;
+}
+
+/* 온도(빨강) */
+.graph-line-temp {
+  stroke: #ff4b4b;
+  stroke-width: 2;
+  opacity: 0.9;
+}
+
+
