@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import "./graph.css";
 import { API_URL } from "../api/client";
 
-// Figma 이미지 리소스
 const imgCloud =
   "https://www.figma.com/api/mcp/asset/850ac4b5-1aae-4398-be1f-653f74eaa36c";
 const imgEllipse33 =
